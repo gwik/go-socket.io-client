@@ -4,17 +4,18 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/zhouhui8915/engine.io-go/message"
-	"github.com/zhouhui8915/engine.io-go/parser"
-	"github.com/zhouhui8915/engine.io-go/polling"
-	"github.com/zhouhui8915/engine.io-go/transport"
-	"github.com/zhouhui8915/engine.io-go/websocket"
 	"io"
 	"net/http"
 	"net/url"
 	"strings"
 	"sync"
 	"time"
+
+	"github.com/zhouhui8915/engine.io-go/message"
+	"github.com/zhouhui8915/engine.io-go/parser"
+	"github.com/zhouhui8915/engine.io-go/polling"
+	"github.com/zhouhui8915/engine.io-go/transport"
+	"github.com/zhouhui8915/engine.io-go/websocket"
 )
 
 var InvalidError = errors.New("invalid transport")
@@ -340,7 +341,12 @@ func (c *clientConn) onOpen() error {
 			return InvalidError
 		}
 
-		c.request.URL.Scheme = "ws"
+		if c.request.URL.Scheme == "http" {
+			c.request.URL.Scheme = "ws"
+		} else if c.request.URL.Scheme == "https" {
+			c.request.URL.Scheme = "wss"
+		}
+
 		q.Set("sid", c.id)
 		q.Set("transport", "websocket")
 		c.request.URL.RawQuery = q.Encode()
