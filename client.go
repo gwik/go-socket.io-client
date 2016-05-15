@@ -249,3 +249,7 @@ func (client *Client) readLoop() error {
 		}
 	}
 }
+
+func (client *Client) Close() error {
+	return client.conn.Close()
+}
